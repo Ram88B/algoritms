@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <chrono>
+
+using namespace std;
+
+void quicksort(vector<int>& arr, int left, int right) {
+    if (left < right) {
+        int pivot = arr[right]; 
+        int i = left - 1;
+
+        for (int j = left; j < right; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swap(arr[i], arr[j]); 
+            }
+        }
+        swap(arr[i + 1], arr[right]); 
+        int partitionIndex = i + 1;
+
+        quicksort(arr, left, partitionIndex - 1); 
+        quicksort(arr, partitionIndex + 1, right); 
+    }
+}
+
+
+void test_quicksort() {
+    const int size = 1'000'000; 
+    vector<int> random_array(size);
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(1, 1000000);
+
+    for (int& num : random_array) {
+        num = dis(gen);
+    }
+
+    vector<int> array_for_builtin_sort = random_array; 
+
+    auto start_time = chrono::high_resolution_clock::now();
+    quicksort(random_array, 0, size - 1);
+    auto quicksort_time = chrono::high_resolution_clock::now() - start_time;
+
+    start_time = chrono::high_resolution_clock::now();
+    sort(array_for_builtin_sort.begin(), array_for_builtin_sort.end());
+    auto builtin_sort_time = chrono::high_resolution_clock::now() - start_time;
+
+    if (random_array != array_for_builtin_sort) {
+        cout << "Сортировки не совпадают!" << endl;
+        return;
+    }
+
+    cout << "Время выполнения QuickSort: "
+        << chrono::duration_cast<chrono::milliseconds>(quicksort_time).count() << " мс" << endl;
+    cout << "Время выполнения встроенной сортировки: "
+        << chrono::duration_cast<chrono::milliseconds>(builtin_sort_time).count() << " мс" << endl;
+}
+
+int main() {
+    setlocale(LC_ALL, "rus");
+    test_quicksort(); 
+    return 0;
+}
