@@ -1,0 +1,54 @@
+import math
+import random
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices  
+        self.edges = []    
+
+    def add_edge(self, u, v, weight):
+        self.edges.append((u, v, weight))
+
+    def bellman_ford(self, start):
+        dist = [math.inf] * self.V
+        dist[start] = 0
+
+        for i in range(self.V - 1):
+            for u, v, weight in self.edges:
+                if dist[u] != math.inf and dist[u] + weight < dist[v]:
+                    dist[v] = dist[u] + weight
+
+        for u, v, weight in self.edges:
+            if dist[u] != math.inf and dist[u] + weight < dist[v]:
+                return "U grafa est otricatelniy cikle"
+
+        return dist
+
+def generate_large_graph(num_vertices, num_edges):
+    graph = Graph(num_vertices)
+    for _ in range(num_edges):
+        u = random.randint(0, num_vertices - 1)
+        v = random.randint(0, num_vertices - 1)
+        weight = random.randint(0, 10)  
+        graph.add_edge(u, v, weight)
+    return graph
+
+def test_bellman_ford():
+    num_vertices = 1000  
+    num_edges = 5000     
+    
+    graph = generate_large_graph(num_vertices, num_edges)
+
+    start_vertex = random.randint(0, num_vertices - 1)
+    print(f"Zapusk ot vershiny {start_vertex}...")
+    
+    result = graph.bellman_ford(start_vertex)
+    
+    if isinstance(result, str):
+        print(result)
+    else:
+        print("Rasstoyanie ot istoka:")
+        for vertex in range(num_vertices):
+            print(f"Rasstoyanie do vershiny {vertex}: {result[vertex]}")
+
+test_bellman_ford()
