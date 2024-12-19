@@ -1,0 +1,66 @@
+import heapq
+import time
+
+def prim_with_heap(graph, start_vertex):
+    mst_edges = []
+    visited = set()
+    min_heap = [(0, start_vertex, None)] 
+
+    while min_heap:
+        cost, current_vertex, from_vertex = heapq.heappop(min_heap)
+
+        if current_vertex in visited:
+            continue
+
+        visited.add(current_vertex)
+        if from_vertex is not None:
+            mst_edges.append((from_vertex, current_vertex, cost))
+
+        for neighbor, weight in graph[current_vertex]:
+            if neighbor not in visited:
+                heapq.heappush(min_heap, (weight, neighbor, current_vertex))
+
+    return mst_edges
+
+graph = {
+    'A': [('B', 1), ('C', 3)],
+    'B': [('A', 1), ('C', 1), ('D', 4)],
+    'C': [('A', 3), ('B', 1), ('D', 1)],
+    'D': [('B', 4), ('C', 1)]
+}
+
+# Измерение времени работы
+start_time = time.time()
+mst_with_heap = prim_with_heap(graph, 'A')
+end_time = time.time()
+print("MST with heap:", mst_with_heap)
+print("Time taken with heap:", end_time - start_time)
+
+# Алгоритм Прима без использования кучи
+
+def prim_without_heap(graph, start_vertex):
+    mst_edges = []
+    visited = set([start_vertex])
+    edges = []
+
+    while len(visited) < len(graph):
+        for vertex in visited:
+            for neighbor, weight in graph[vertex]:
+                if neighbor not in visited:
+                    edges.append((weight, vertex, neighbor))
+
+        edges.sort()  
+        min_edge = edges.pop(0)
+        weight, from_vertex, to_vertex = min_edge
+        mst_edges.append((from_vertex, to_vertex, weight))
+        visited.add(to_vertex)
+        edges.clear()  
+
+    return mst_edges
+
+# Измерение времени работы
+start_time = time.time()
+mst_without_heap = prim_without_heap(graph, 'A')
+end_time = time.time()
+print("MST without heap:", mst_without_heap)
+print("Time taken without heap:", end_time - start_time)
