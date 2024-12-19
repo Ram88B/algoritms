@@ -1,0 +1,43 @@
+from collections import deque
+import random
+
+def bfs(graph, start):
+    visited = set()  
+    queue = deque([start]) 
+
+    while queue:
+        node = queue.popleft()  
+        if node not in visited:
+            visited.add(node) 
+            print(node)  
+            
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+
+def generate_large_graph(num_nodes, max_neighbors):
+    graph = {i: [] for i in range(num_nodes)}
+    
+    for node in range(num_nodes):
+        neighbors = random.sample(range(num_nodes), k=random.randint(1, max_neighbors))
+        for neighbor in neighbors:
+            if neighbor != node and neighbor not in graph[node]:  
+                graph[node].append(neighbor)
+    
+    return graph
+
+def test_bfs():
+    num_nodes = 20  
+    max_neighbors = 5  
+    
+    graph = generate_large_graph(num_nodes, max_neighbors)
+    
+    print("Random graf:")
+    for node, neighbors in graph.items():
+        print(f"{node}: {neighbors}")
+
+    print("BFS nachinaya s 0:")
+    bfs(graph, 0)
+
+if __name__ == "__main__":
+    test_bfs()
