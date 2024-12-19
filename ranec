@@ -1,0 +1,33 @@
+import random
+
+def knapsack(values, sizes, capacity):
+    n = len(values)
+    A = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for c in range(capacity + 1):
+            if sizes[i - 1] > c:
+                A[i][c] = A[i - 1][c]
+            else:
+                A[i][c] = max(A[i - 1][c], A[i - 1][c - sizes[i - 1]] + values[i - 1])
+
+    return A[n][capacity]
+
+def generate_large_test_data(num_items, max_value, max_size, capacity):
+    values = [random.randint(1, max_value) for _ in range(num_items)]
+    sizes = [random.randint(1, max_size) for _ in range(num_items)]
+    return values, sizes
+
+def test_knapsack():
+    num_items = 1000  
+    max_value = 100   
+    max_size = 50     
+    capacity = 5000   
+
+    values, sizes = generate_large_test_data(num_items, max_value, max_size, capacity)
+
+    print("algoritm o rance...")
+    max_value_obtained = knapsack(values, sizes, capacity)
+    print(f"max cena v rance: {max_value_obtained}")
+
+test_knapsack()
